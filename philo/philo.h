@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:15:04 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/16 14:14:04 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:08:12 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,13 @@ typedef enum e_error
 /**
  * @brief Struct for the simulation rules
  * 
- * @param sim_state The state of the simulation
- * @param start_time The start time of the simulation
- * @param philo_total Number of philos
- * @param time_to_die Time to die in ms
- * @param time_to_eat Time to eat in ms
+ * @param sim_state 	The state of the simulation
+ * @param start_time	The start time of the simulation
+ * @param philo_total 	Number of philos
+ * @param time_to_die 	Time to die in ms
+ * @param time_to_eat 	Time to eat in ms
  * @param time_to_sleep Time to sleep in ms
- * @param iteration Number of simulation
+ * @param iteration 	Number of simulation
 */
 typedef struct s_rules
 {
@@ -100,14 +100,16 @@ typedef struct s_rules
 /**
  * @brief Struct for each philo
  * 
- * @param id Philo ID
- * @param meal_count Number of meal eaten
- * @param full Philo's stomach lmao
- * @param state Philo's state
- * @param philo The thread
- * @param left The address to left fork (mutex), own index's fork
- * @param right The address to right fork (mutex) own index - 1's fork
- * @param rules The simulation rules
+ * @param id 				Philo ID
+ * @param meal_count 		Number of meal eaten
+ * @param full 				Philo's stomach lmao
+ * @param last_ate 			Philo's last ate time
+ * @param me 				The thread
+ * @param left_fork 		Left fork (mutex), own index's fork
+ * @param right_fork		Right fork (mutex) own index - 1's fork
+ * @param last_ate_lock 	The mutex for last_ate
+ * @param meal_count_lock 	The mutex for meal_count
+ * @param rules 			The simulation rules
  * 
  * @attention These info should be private for each philo only
 */
@@ -120,16 +122,17 @@ typedef struct s_philo
 	pthread_t		me;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	last_ate_lock;
+	pthread_mutex_t	meal_count_lock;
 	t_rules			*rules;
 }		t_philo;
 
 /**
  * @brief Struct for simulation
  * 
- * @param start_time The start time of the simulation
- * @param philo_full The number of philo that are full (eaten n of meal)
- * @param forks The fork mutexes
- * @param rules The rules of the simulation
+ * @param philo_full 	The number of philo that are full
+ * @param forks 		The fork mutexes
+ * @param rules 		The rules of the simulation
  * 
  * @attention The `n` here refers to the number of iteration
 */
@@ -155,7 +158,7 @@ void	*pl_routine(void *arg);
 void	*pl_monitor(void *arg);
 
 // Message
-void	pl_show_error(t_error error, int id);
+int		pl_show_error(t_error error, int id);
 void	pl_declare_state(t_philo *philo, t_state state);
 
 // Utils

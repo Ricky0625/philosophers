@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/16 13:35:39 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:53:27 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,26 +16,36 @@
  * @brief Keep track if the assigned philo is full and also to calculate
  *        the total number philo that is full.
  * @param philo the assigned philo
+ * 
+ * @details
+ * This function will only do calculation if the simulation rules requires
+ * the philosopher to eat at least how many meal.
+ * The function checks if the assigned philosopher has eaten what's required.
+ * If yes and the assigned philo has not "declared" as full yet, increment
+ * philo_full, which is use to keep track how many philosopher is full.
+ * The second half of this function is to check if the number of philosopher
+ * that is full reach the total number of philosopher. If yes, set
+ * simulation state to "END" to indicate that the simulation shall end now.
+ * 
+ * @return
+ * 0, If the optional rules is not set or not all philo is full
+ * 1, If all the philo is full.
+*/
+/**
+ * TODO: Might have to lock and unlock philo_full and sim_state
 */
 int	pl_full_tracker(t_philo *philo)
 {
-	// might have to reconsider this
 	if (philo->rules->iteration == 0)
 		return (0);
-	// check individual philo if they are full or not
-	if (philo->meal_count >= philo->rules->iteration && philo->full == 0)
+	if (philo->meal_count >= philo->rules->iteration && philo->full == NOTFULL)
 	{
-		philo->rules->philo_full++; // need to unlock and lock this
-		philo->full = 1;
+		philo->rules->philo_full++;
+		philo->full = FULL;
 	}
-	// check if all philo already full or not
 	if (philo->rules->philo_full == philo->rules->philo_total)
 	{
-		// need to lock and unlock philo_full
-		
-		// current idea is to have a variable that can be set here
-		// in philo's routine (while loop), check if that value is the exit
-		// condition
+		philo->rules->sim_state = END;
 		return (1);
 	}
 	return (0);
@@ -44,18 +54,32 @@ int	pl_full_tracker(t_philo *philo)
 /**
  * @brief Check if a philo will die of starvation or not
  * @param philo The assigned philo
+ * 
+ * @details
+ * This function checks if assigned philo will die of starvation or not.
+ * This is done by comparing the philo's last ate time and the time to die.
+ * When the compared value is greater and equal than the time to die,
+ * set the simulation state to "END". Declare the assign philo as dead.
+ * 
+ * @return
+ * 1, if the assigned philo died because of starvation.
+ * 0, if the assigned philo did not died.
+*/
+/**
+ * TODO: Might need to lock and unlock "last_ate"
 */
 int	pl_check_dead(t_philo *philo)
 {
 	time_t	curr_time;
+	time_t	last_ate;
 
-	if (philo->last_ate == 0)
-		return (0);
+	last_ate = philo->last_ate;
+	if (last_ate == 0)
+		last_ate = philo->rules->start_time;
 	curr_time = pl_get_time();
-	// might need to lock and unlock last ate
-	if ((curr_time - philo->last_ate) >= philo->rules->time_to_die)
+	if ((curr_time - last_ate) >= philo->rules->time_to_die)
 	{
-		// need to set something that stops all philos and monitors
+		philo->rules->sim_state = END;
 		pl_declare_state(philo, DIED);
 		return (1);
 	}
@@ -68,16 +92,17 @@ int	pl_check_dead(t_philo *philo)
  * 
  * @details
  * The idea of this routine is to check if the philosopher will die because
- * of starvation.
+ * of starvation. As well as if all the philo are full or not.
 */
 /**
- * The idea here is monitor thread will check the assigned philo, if either one condition:
- * 1. the assigned philo dead
+ * The idea here is monitor thread will check the assigned philo, if either
+ * one condition:
+ * 1. the assigned philo died
  * 2. the assigned philo is full and same as others
  * ... this function will then break.
  * When this function breaks, it means the monitor thread has done its job.
- * When either one condition fulfilled, monitor thread should set something that will
- * cause all philo to stop its routine.
+ * When either one condition fulfilled, monitor thread should set something
+ * that will cause all philo to stop its routine.
 */
 /**
  * TODO:
@@ -90,10 +115,9 @@ void	*pl_monitor(void *arg)
 	philo = arg;
 	while (1)
 	{
-		// the exit condition should put here
-		if (pl_check_dead(philo) == 1)
+		if (philo->rules->sim_state == END)
 			break ;
-		if (pl_full_tracker(philo) == 1)
+		if (pl_check_dead(philo) == 1 || pl_full_tracker(philo) == 1)
 			break ;
 	}
 	return (NULL);

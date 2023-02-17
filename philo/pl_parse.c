@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:45:21 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/16 14:12:44 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:09:19 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
  * @return
  * If each of the args is ok, return 1; Return 0 if there's an error.
 */
-int	pl_check_args(int ac, char **av)
+static int	pl_check_args(int ac, char **av)
 {
 	int	i;
 	int	arg;
@@ -36,16 +36,10 @@ int	pl_check_args(int ac, char **av)
 	while (++i < ac)
 	{
 		if (ft_isdigit_str(av[i]) == 0)
-		{
-			pl_show_error(NON_NUMERIC_ARGS, 0);
-			return (0);
-		}
+			return (pl_show_error(NON_NUMERIC_ARGS, 0));
 		arg = ft_atoi(av[i]);
 		if (arg < 0)
-		{
-			pl_show_error(NEGATIVE_ARGS, 0);
-			return (0);
-		}
+			return (pl_show_error(NEGATIVE_ARGS, 0));
 	}
 	return (1);
 }
@@ -64,7 +58,7 @@ int	pl_check_args(int ac, char **av)
  *            is not enabled. If it's greater than 0, iteration mode is
  * 			  enabled, should check how many each philo has eaten.
 */
-void	pl_setup_rules(int ac, char **av, t_rules *rules)
+static void	pl_setup_rules(int ac, char **av, t_rules *rules)
 {
 	rules->sim_state = RUN;
 	rules->philo_total = ft_atoi(*av++);
@@ -75,7 +69,6 @@ void	pl_setup_rules(int ac, char **av, t_rules *rules)
 		rules->iteration = ft_atoi(*av);
 	else
 		rules->iteration = 0;
-	rules->start_time = pl_get_time();
 	rules->philo_full = 0;
 }
 
@@ -96,10 +89,7 @@ void	pl_setup_rules(int ac, char **av, t_rules *rules)
 int	pl_parse(int ac, char **av, t_rules *rules)
 {
 	if (ac != 4 && ac != 5)
-	{
-		pl_show_error(INVALID_ARGS_TOTAL, 0);
-		return (0);
-	}
+		return (pl_show_error(INVALID_ARGS_TOTAL, 0));
 	if (pl_check_args(ac, av) == 0)
 		return (0);
 	pl_setup_rules(ac, av, rules);

@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:38:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/16 11:29:25 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:47:10 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,19 @@ time_t	pl_get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-time_t	pl_get_timestamp(time_t start_time)
-{
-	return (pl_get_time() - start_time);
-}
-
+/**
+ * @brief A better usleep
+ * 
+ * @details
+ * Through some experiments as well as peer's observation, it seems like
+ * usleep is not that accurate in some case. Usleep might "overslept", which
+ * makes the timestamp of the program less accurate. Hence, to prevent this
+ * situation, the idea is to let usleep to sleep a constant amount of time
+ * and check if the program has slept for what's required.
+*/
+/**
+ * TODO: Might have to lock "cur_time"
+*/
 void	pl_usleep(time_t sec)
 {
 	time_t	cur_time;

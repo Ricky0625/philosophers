@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 14:23:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/16 14:14:49 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:10:37 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
  * to use the fork assigned to them. Of course, need to check if the fork
  * is taken or not.
 */
-void	pl_philo_init(t_simulation *sim, t_philo *philo, int id)
+int	pl_philo_init(t_simulation *sim, t_philo *philo, int id)
 {
 	philo->id = id;
 	philo->meal_count = 0;
@@ -41,6 +41,11 @@ void	pl_philo_init(t_simulation *sim, t_philo *philo, int id)
 		philo->right_fork = &sim->forks[sim->rules->philo_total - 1];
 	else
 		philo->right_fork = &sim->forks[id - 1];
+	if (pthread_mutex_init(&philo->last_ate_lock, NULL) != 0)
+		return (pl_show_error(CREATE_MUT_FAILED, id));
+	if (pthread_mutex_init(&philo->meal_count_lock, NULL) != 0)
+		return (pl_show_error(CREATE_MUT_FAILED, id));
+	return (1);
 }
 
 /**
@@ -60,10 +65,7 @@ int	pl_prepare_forks(t_simulation *sim)
 	while (++i < sim->rules->philo_total)
 	{
 		if (pthread_mutex_init(&forks[i], NULL) != 0)
-		{
-			pl_show_error(CREATE_MUT_FAILED, i);
-			return (0);
-		}
+			return (pl_show_error(CREATE_MUT_FAILED, i));
 	}
 	return (1);
 }
@@ -87,17 +89,12 @@ int	pl_spawn_philo(t_simulation *sim)
 	pl = sim->philos;
 	while (++i < sim->rules->philo_total)
 	{
-		pl_philo_init(sim, &pl[i], i);
+		if (pl_philo_init(sim, &pl[i], i) == 0)
+			return (0);
 		if (pthread_create(&pl[i].me, NULL, &pl_routine, (void *)&pl[i]) != 0)
-		{
-			pl_show_error(CREATE_THD_FAILED, i);
-			return (0);
-		}
+			return (pl_show_error(CREATE_THD_FAILED, i));
 		if (pthread_create(&monitor, NULL, &pl_monitor, (void *)&pl[i]) != 0)
-		{
-			pl_show_error(CREATE_THD_FAILED, i);
-			return (0);
-		}
+			return (pl_show_error(CREATE_THD_FAILED, i));
 		pthread_detach(monitor);
 	}
 	return (1);
@@ -118,7 +115,6 @@ int	pl_spawn_philo(t_simulation *sim)
 */
 int	pl_simulation_init(t_simulation *sim, t_rules *rules)
 {
-	rules->start_time = pl_get_time();
 	sim->rules = rules;
 	sim->forks = malloc(sizeof(pthread_mutex_t) * rules->philo_total);
 	if (sim->forks == NULL)
@@ -128,6 +124,7 @@ int	pl_simulation_init(t_simulation *sim, t_rules *rules)
 		return (0);
 	if (pl_prepare_forks(sim) == 0)
 		return (0);
+	rules->start_time = pl_get_time();
 	if (pl_spawn_philo(sim) == 0)
 		return (0);
 	return (1);

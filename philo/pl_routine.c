@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 16:26:09 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/16 14:15:42 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:46:49 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
  * @brief Function to handle mutex (fork action)
  * @param philo The philo struct
  * @param act Fork action. take: Lock mutex; return: Unlock mutex.
+ * 
+ * @details
+ * If act is "TAKE", lock mutexes.
+ * If act is "RETURN", unlock mutexes.
+ * 
+ * "Mutexes" here are referring to the left and right fork.
 */
 void	pl_fork_action(t_philo *philo, t_fork_action act)
 {
@@ -34,41 +40,67 @@ void	pl_fork_action(t_philo *philo, t_fork_action act)
 }
 
 /**
- * @brief Philo THINK
+ * @brief Eat routine of philo
+ * @param philo The assigned philo
  * 
  * @details
- * The process to take the forks. When philo has taken two forks, start eating.
+ * Routine:
+ * 1. Take forks (Left & Right)
+ * 2. Update last_ate time before eating
+ * 3. Declare EAT as the assigned philo's state
+ * 4. Update the meal count;
+ * 5. Eat for "time_to_eat"
+ * 6. Put down forks (Left & Right)
 */
-void	pl_think(t_philo *philo)
-{
-	// get timestamp here
-	pl_declare_state(philo, THINK);
-}
-
+/**
+ * TODO: Need to lock and unlock "last_ate" and "meal_count"
+*/
 void	pl_eat(t_philo *philo)
 {
 	pl_fork_action(philo, TAKE);
-	philo->last_ate = pl_get_time(); // need to lock this
+	philo->last_ate = pl_get_time();
 	pl_declare_state(philo, EAT);
-	philo->meal_count++; // need to lock this
-	usleep(philo->rules->time_to_eat * 1000);
+	philo->meal_count++;
+	pl_usleep(philo->rules->time_to_eat);
 	pl_fork_action(philo, RETURN);
 }
 
+/**
+ * @brief Sleep routine of philo
+ * 
+ * Declare state and sleep for "time_to_sleep"
+*/
 void	pl_sleep(t_philo *philo)
 {
 	pl_declare_state(philo, SLEEP);
-	usleep(philo->rules->time_to_sleep * 1000);
+	pl_usleep(philo->rules->time_to_sleep);
 }
 
 /**
  * @brief The routine of each philo
-*/
-/**
- * 1. Take forks
- * 2. Eat
- * 3. Sleep
- * 4. Think
+ * @param arg The assigned philo
+ * 
+ * @details
+ * Every philosophers need to take turns to have their meal.
+ * This is because if everyone takes the fork at the same time,
+ * it will cause a deathlock and everyone will wait till died.
+ * Since when one philo needs to eat, he needs to take the fork
+ * of his and the one sitting next to him. So, the idea here is
+ * to seperate the philosophers into two big group. If the 
+ * ID of the philo is odd number, they have to wait for
+ * "time_to_eat" time. Else, they can perform the routine first.
+ * 
+ * Routine:
+ * 1. Eat
+ * 2. Sleep
+ * 3. Think
+ * 
+ * When the state of the simulation is set to "END", every
+ * philo shall stop his routine and join the thread back
+ * to main thread.
+ * 
+ * @return
+ * Always return a (void *)NULL. The return value is useless.
 */
 void	*pl_routine(void *arg)
 {
@@ -79,10 +111,11 @@ void	*pl_routine(void *arg)
 		pl_usleep(philo->rules->time_to_eat);
 	while (1)
 	{
-		// exit condition of each philo should place here
+		if (philo->rules->sim_state == END)
+			break ;
 		pl_eat(philo);
 		pl_sleep(philo);
-		pl_think(philo);
+		pl_declare_state(philo, THINK);
 	}
 	return (NULL);
 }

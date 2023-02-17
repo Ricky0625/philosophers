@@ -6,16 +6,32 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/16 13:43:21 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/17 16:51:38 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	pl_show_error(t_error error, int id)
+/**
+ * @brief Show error message
+ * @param error Error type
+ * @param id The id of the philo
+ * 
+ * @details
+ * 1. INVALID_ARGS_TOTAL - The number of args is nor 4 or 5.
+ * 2. NON_NUMERIC_ARGS - Found non numeric arguments.
+ * 3. NEGATIVE_ARGS - Found negative arguments.
+ * 4. CREATE_THD_FAILED - Failed to create thread.
+ * 5. CREATE_MUT_FAILED - Failed to create mutex.
+ * 
+ * @return
+ * 1, if the error type is unknown
+ * 0, if there's an error
+*/
+int	pl_show_error(t_error error, int id)
 {
 	if (error < 0 || error >= ERROR_TOTAL)
-		return ;
+		return (1);
 	printf(RED"[ERROR]: ");
 	if (error == INVALID_ARGS_TOTAL)
 		printf("Require at least 4 or 5 arguments!\n\n");
@@ -31,8 +47,17 @@ void	pl_show_error(t_error error, int id)
 		printf("Failed to destroy MUTEX %d\n", id);
 	if (!(error >= CREATE_THD_FAILED && error < ERROR_TOTAL))
 		printf(GRN"Run `make help` for help.\n"DEF);
+	return (0);
 }
 
+/**
+ * @brief Declare the state of a philo
+ * @param philo The target philo
+ * @param state The state of the philo
+*/
+/**
+ * TODO: Might have to lock and unlock "curr_time"
+*/
 void	pl_declare_state(t_philo *philo, t_state state)
 {
 	time_t	curr_time;
@@ -40,9 +65,8 @@ void	pl_declare_state(t_philo *philo, t_state state)
 
 	if (philo == NULL)
 		return ;
-	curr_time = pl_get_time(); // might have to lock this
-	start_time = philo->rules->start_time; // this will always be constant
-	usleep(1000);
+	curr_time = pl_get_time();
+	start_time = philo->rules->start_time;
 	printf(WHT"%6ld %3d ", curr_time - start_time, philo->id + 1);
 	if (state == FORK)
 		printf("%-4s", "has ");
