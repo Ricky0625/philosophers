@@ -6,11 +6,21 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 14:23:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/17 16:10:37 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/19 16:54:46 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	print_locks(t_locks *locks, int id)
+{
+	printf("\n====== LOCKS%d ======\n",id);
+	printf("Declare lock: %p\n", &locks->declare_lock);
+	printf("Sim lock: %p\n", &locks->sim_state_lock);
+	printf("Meal lock: %p\n", &locks->meal_count_lock);
+	printf("Last lock: %p\n", &locks->last_ate_lock);
+	printf("====================\n\n");
+}
 
 /**
  * @brief Initialize each philo and assign them their forks
@@ -37,14 +47,12 @@ int	pl_philo_init(t_simulation *sim, t_philo *philo, int id)
 	philo->last_ate = 0;
 	philo->left_fork = &sim->forks[id];
 	philo->rules = sim->rules;
+	if (pl_lock_setup(&philo->rules->locks, PHILO) == 0)
+		return (0);
 	if (id == 0)
 		philo->right_fork = &sim->forks[sim->rules->philo_total - 1];
 	else
 		philo->right_fork = &sim->forks[id - 1];
-	if (pthread_mutex_init(&philo->last_ate_lock, NULL) != 0)
-		return (pl_show_error(CREATE_MUT_FAILED, id));
-	if (pthread_mutex_init(&philo->meal_count_lock, NULL) != 0)
-		return (pl_show_error(CREATE_MUT_FAILED, id));
 	return (1);
 }
 

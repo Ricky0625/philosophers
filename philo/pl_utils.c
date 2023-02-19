@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:38:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/17 16:47:10 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/19 13:36:28 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	pl_usleep(time_t sec)
 	cur_time = pl_get_time();
 	while (1)
 	{
-		usleep(10);
+		usleep(500);
 		if ((pl_get_time() - cur_time) >= sec)
 			break ;
 	}

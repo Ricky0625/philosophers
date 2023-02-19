@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/17 16:53:27 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/19 16:57:08 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,17 @@
  * 1, If all the philo is full.
 */
 /**
- * TODO: Might have to lock and unlock philo_full and sim_state
+ * TODO: Might have to lock and unlock sim_state
+ * 	     Philo full might not have to lock and unlock
 */
 int	pl_full_tracker(t_philo *philo)
 {
+	int	iteration;
+
 	if (philo->rules->iteration == 0)
 		return (0);
-	if (philo->meal_count >= philo->rules->iteration && philo->full == NOTFULL)
+	iteration = philo->rules->iteration;
+	if (pl_get_meal_count(philo) >= iteration && philo->full == NOTFULL)
 	{
 		philo->rules->philo_full++;
 		philo->full = FULL;
@@ -46,6 +50,7 @@ int	pl_full_tracker(t_philo *philo)
 	if (philo->rules->philo_full == philo->rules->philo_total)
 	{
 		philo->rules->sim_state = END;
+		pl_fork_action(philo, RETURN);
 		return (1);
 	}
 	return (0);
@@ -73,14 +78,13 @@ int	pl_check_dead(t_philo *philo)
 	time_t	curr_time;
 	time_t	last_ate;
 
-	last_ate = philo->last_ate;
-	if (last_ate == 0)
-		last_ate = philo->rules->start_time;
+	last_ate = pl_get_last_ate(philo);
 	curr_time = pl_get_time();
-	if ((curr_time - last_ate) >= philo->rules->time_to_die)
+	if ((curr_time - last_ate) > philo->rules->time_to_die)
 	{
-		philo->rules->sim_state = END;
 		pl_declare_state(philo, DIED);
+		pl_fork_action(philo, RETURN);
+		philo->rules->sim_state = END;
 		return (1);
 	}
 	return (0);
@@ -115,7 +119,7 @@ void	*pl_monitor(void *arg)
 	philo = arg;
 	while (1)
 	{
-		if (philo->rules->sim_state == END)
+		if (pl_get_sim_state(philo) == END)
 			break ;
 		if (pl_check_dead(philo) == 1 || pl_full_tracker(philo) == 1)
 			break ;

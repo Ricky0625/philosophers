@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 16:26:09 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/17 16:46:49 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/19 16:53:32 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,16 @@ void	pl_fork_action(t_philo *philo, t_fork_action act)
  * 5. Eat for "time_to_eat"
  * 6. Put down forks (Left & Right)
 */
-/**
- * TODO: Need to lock and unlock "last_ate" and "meal_count"
-*/
 void	pl_eat(t_philo *philo)
 {
 	pl_fork_action(philo, TAKE);
+	pthread_mutex_lock(&philo->rules->locks.last_ate_lock);
 	philo->last_ate = pl_get_time();
+	pthread_mutex_unlock(&philo->rules->locks.last_ate_lock);
 	pl_declare_state(philo, EAT);
+	pthread_mutex_lock(&philo->rules->locks.meal_count_lock);
 	philo->meal_count++;
+	pthread_mutex_unlock(&philo->rules->locks.meal_count_lock);
 	pl_usleep(philo->rules->time_to_eat);
 	pl_fork_action(philo, RETURN);
 }
@@ -108,10 +109,10 @@ void	*pl_routine(void *arg)
 
 	philo = arg;
 	if (philo->id % 2 != 0)
-		pl_usleep(philo->rules->time_to_eat);
+		pl_usleep(philo->rules->time_to_eat / 2);
 	while (1)
 	{
-		if (philo->rules->sim_state == END)
+		if (pl_get_sim_state(philo) == END)
 			break ;
 		pl_eat(philo);
 		pl_sleep(philo);

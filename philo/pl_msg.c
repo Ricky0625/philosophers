@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/17 16:51:38 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/19 15:41:13 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,23 +63,22 @@ void	pl_declare_state(t_philo *philo, t_state state)
 	time_t	curr_time;
 	time_t	start_time;
 
-	if (philo == NULL)
+	if (philo == NULL || pl_get_sim_state(philo) == END)
 		return ;
+	pthread_mutex_lock(&philo->rules->locks.declare_lock);
 	curr_time = pl_get_time();
 	start_time = philo->rules->start_time;
-	printf(WHT"%6ld %3d ", curr_time - start_time, philo->id + 1);
+	// printf("%ld %d ", curr_time - start_time, philo->id + 1);
+	printf("%8ld %3d ", curr_time - start_time, philo->id + 1);
 	if (state == FORK)
-		printf("%-4s", "has ");
-	else if (state != DIED)
-		printf("%-4s", "is ");
-	if (state == FORK)
-		printf(PUR"taken a fork\n"DEF);
+		printf(PUR"has taken a fork\n"DEF);
 	else if (state == EAT)
-		printf(GRN"eating\n"DEF);
+		printf(GRN"is eating\n"DEF);
 	else if (state == SLEEP)
-		printf(CYN"sleeping\n"DEF);
+		printf(CYN"is sleeping\n"DEF);
 	else if (state == THINK)
-		printf(YLW"thinking\n"DEF);
+		printf(YLW"is thinking\n"DEF);
 	else if (state == DIED)
-		printf(RED"%8s\n"DEF, "died");
+		printf(RED"%s\n"DEF, "died");
+	pthread_mutex_unlock(&philo->rules->locks.declare_lock);
 }

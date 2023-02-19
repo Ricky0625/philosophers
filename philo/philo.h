@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:15:04 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/17 16:08:12 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/19 16:55:55 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,16 @@
 
 /**
  * @brief Enum for philo & simulation states
+ * 
+ * @param FORK		Taken a fork
+ * @param EAT		Eating
+ * @param SLEEP		Sleeping
+ * @param THINK		Thinking
+ * @param DIED		Died
+ * @param NOTFULL	Not full (optional mode)
+ * @param FULL		Full (optional mode)
+ * @param RUN		Simulation still on-going
+ * @param END		Simulation ended
 */
 typedef enum e_state
 {
@@ -45,12 +55,16 @@ typedef enum e_state
 	DIED,
 	NOTFULL,
 	FULL,
+	HALT,
 	RUN,
 	END
 }		t_state;
 
 /**
- * @brief Enum for mutex's actions
+ * @brief Enum for fork mutex's actions
+ * 
+ * @param TAKE		Take fork (lock fork mutex)
+ * @param RETURN	Return fork (unlock fork mutex)
 */
 typedef enum e_fork_action
 {
@@ -59,7 +73,26 @@ typedef enum e_fork_action
 }		t_fork_action;
 
 /**
+ * @brief Enum for lock type
+ * 
+ * @param SHARED 	The mutex is shared among all philo
+ * @param PHILO		The mutex is only for the assigned philo
+*/
+typedef enum e_lock_type
+{
+	SHARED,
+	PHILO
+}		t_lock_type;
+
+/**
  * @brief Enum for errors
+ * 
+ * @param INVALID_ARGS_TOTAL	Invalid arguments count
+ * @param NON_NUMERIC_ARGS		Consists of non numeric arguments
+ * @param NEGATIVE_ARGS			Consists of non positive numeric arguments
+ * @param CREATE_THD_FAILED		Failed to create thread
+ * @param CREATE_MUT_FAILED		Failed to create mutex
+ * @param DESTROY_MUT_FAILED	Failed to destroy mutex
 */
 typedef enum e_error
 {
@@ -73,6 +106,22 @@ typedef enum e_error
 }		t_error;
 
 /* ====== STRUCTS ====== */
+
+/**
+ * @brief A struct that store all the additional mutexes
+ * 
+ * @param last_ate_lock		Philo's last ate mutex
+ * @param meal_count_lock	Philo's meal count mutex
+ * @param declare_lock		Philo's declare mutex
+ * @param sim_state_lock	Philo's simulation state mutex
+*/
+typedef struct s_locks
+{
+	pthread_mutex_t	last_ate_lock;
+	pthread_mutex_t	meal_count_lock;
+	pthread_mutex_t	declare_lock;
+	pthread_mutex_t	sim_state_lock;
+}		t_locks;
 
 /**
  * @brief Struct for the simulation rules
@@ -95,6 +144,7 @@ typedef struct s_rules
 	int		time_to_sleep;
 	int		iteration;
 	int		philo_full;
+	t_locks	locks;
 }		t_rules;
 
 /**
@@ -107,8 +157,7 @@ typedef struct s_rules
  * @param me 				The thread
  * @param left_fork 		Left fork (mutex), own index's fork
  * @param right_fork		Right fork (mutex) own index - 1's fork
- * @param last_ate_lock 	The mutex for last_ate
- * @param meal_count_lock 	The mutex for meal_count
+ * @param locks				The additional locks that prevent data race
  * @param rules 			The simulation rules
  * 
  * @attention These info should be private for each philo only
@@ -122,8 +171,6 @@ typedef struct s_philo
 	pthread_t		me;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	last_ate_lock;
-	pthread_mutex_t	meal_count_lock;
 	t_rules			*rules;
 }		t_philo;
 
@@ -150,12 +197,19 @@ int		pl_parse(int ac, char **av, t_rules *rules);
 
 // Philos
 void	pl_begin_simulation(t_rules *rules);
+int		pl_lock_setup(t_locks *locks, t_lock_type type);
 
 // Philos action
 void	*pl_routine(void *arg);
+void	pl_fork_action(t_philo *philo, t_fork_action act);
 
 // Monitor
 void	*pl_monitor(void *arg);
+
+// Monitor utils
+time_t	pl_get_last_ate(t_philo *philo);
+t_state	pl_get_sim_state(t_philo *philo);
+int		pl_get_meal_count(t_philo *philo);
 
 // Message
 int		pl_show_error(t_error error, int id);

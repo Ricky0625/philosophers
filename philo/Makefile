@@ -6,7 +6,7 @@
 #    By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/10 13:51:54 by wricky-t          #+#    #+#              #
-#    Updated: 2023/02/14 16:52:39 by wricky-t         ###   ########.fr        #
+#    Updated: 2023/02/19 16:52:42 by wricky-t         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,8 +21,8 @@ CC			:= gcc -g3
 CFLAGS		:= -Wall -Werror -Wextra -pthread
 
 ifeq ($(DB), 1)
-	CFLAGS += -fsanitize=thread
-	# CFLAGS += -fsanitize=address
+	# CFLAGS += -fsanitize=thread
+	CFLAGS += -fsanitize=address
 endif
 
 SRC_PATH	:= .
