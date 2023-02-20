@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 17:17:56 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:09:39 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,6 @@
  * @return
  * 0, If the optional rules is not set or not all philo is full
  * 1, If all the philo is full.
-*/
-/**
- * TODO: Might have to lock and unlock sim_state
- * 	     Philo full might not have to lock and unlock
 */
 int	pl_full_tracker(t_philo *philo)
 {
@@ -75,9 +71,6 @@ int	pl_full_tracker(t_philo *philo)
  * 1, if the assigned philo died because of starvation.
  * 0, if the assigned philo did not died.
 */
-/**
- * TODO: Might need to lock and unlock "last_ate"
-*/
 int	pl_check_dead(t_philo *philo)
 {
 	time_t	curr_time;
@@ -107,20 +100,11 @@ int	pl_check_dead(t_philo *philo)
  * @details
  * The idea of this routine is to check if the philosopher will die because
  * of starvation. As well as if all the philo are full or not.
-*/
-/**
- * The idea here is monitor thread will check the assigned philo, if either
- * one condition:
- * 1. the assigned philo died
- * 2. the assigned philo is full and same as others
- * ... this function will then break.
- * When this function breaks, it means the monitor thread has done its job.
- * When either one condition fulfilled, monitor thread should set something
- * that will cause all philo to stop its routine.
-*/
-/**
- * TODO:
- * Need a way to let other monitor thread to stop checking as well.
+ * 
+ * Same as philosophers' routine, when the simulation state is END, end the
+ * routine.
+ * 
+ * TODO: Ask Joseph why usleep is necessary.
 */
 void	*pl_monitor(void *arg)
 {

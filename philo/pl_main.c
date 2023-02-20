@@ -6,20 +6,15 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:14:32 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/15 15:34:10 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 17:59:29 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /**
- * TODO: Create thread for each philo to monitor them
- * 1. Based on Ray's submission, create just one thread to monitor has
- *    proven to be slow.
- * 2. The monitor thread should check if philo will die because of starvation
- *    and also set the program to exit (need to figure out how to do this)
- * 3. Idea is to let the monitor threads to run another routine in background
- *    (detach)
+ * TODO:
+ * 1. Handle when option is 0.
 */
 
 /**

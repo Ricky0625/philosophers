@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 16:26:09 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 16:55:25 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:07:28 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ void	pl_fork_action(t_philo *philo, t_fork_action act)
  * @details
  * Routine:
  * 1. Take forks (Left & Right)
- * 2. Update last_ate time before eating
+ * 2. Update last_ate time before eating (need to protect)
  * 3. Declare EAT as the assigned philo's state
- * 4. Update the meal count;
+ * 4. Update the meal count; (need to protect)
  * 5. Eat for "time_to_eat"
  * 6. Put down forks (Left & Right)
 */

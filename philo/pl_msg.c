@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 15:33:41 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:10:01 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,6 @@ int	pl_show_error(t_error error, int id)
  * @param philo The target philo
  * @param state The state of the philo
 */
-/**
- * TODO: Might have to lock and unlock "curr_time"
-*/
 void	pl_declare_state(t_philo *philo, t_state state)
 {
 	time_t	curr_time;
@@ -72,7 +69,7 @@ void	pl_declare_state(t_philo *philo, t_state state)
 	if (state == FORK)
 		printf(PUR"has taken a fork\n"DEF);
 	else if (state == EAT)
-		printf(GRN"is eating\n"DEF);
+		printf("is eating\n"DEF);
 	else if (state == SLEEP)
 		printf(CYN"is sleeping\n"DEF);
 	else if (state == THINK)
@@ -81,5 +78,3 @@ void	pl_declare_state(t_philo *philo, t_state state)
 		printf(RED"%s\n"DEF, "died");
 	pthread_mutex_unlock(&philo->rules->locks.declare_lock);
 }
-
-// printf("%ld %d ", curr_time - start_time, philo->id + 1);

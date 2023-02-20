@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:45:21 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 15:18:41 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:01:09 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,16 @@
 /**
  * @brief Setup additional locks that prevent data race
  * @param locks The locks struct
- * @param id the philo id
+ * @param philo The philo struct
+ * @param type The lock type (SHARED / PHILO)
  * 
  * @details
- * 1. Last ate lock - Philo's last ate time.
- * 2. Meal count lock - Philo's meal count.
- * 3. Declare lock - Philo's state declaration.
- * 4. Sim state lock - Simulation's state.
+ * 1. Last ate lock - Philo's last ate time. (PHILO)
+ * 2. Meal count lock - Philo's meal count. (PHILO)
+ * 3. Declare lock - Philo's state declaration. (SHARED)
+ * 4. Sim state lock - Simulation's state. (SHARED)
+ * 5. Death lock - Check if dead process lock. (SHARED)
+ * 6. Full lock - Check if full process lock. (SHARED)
  * 
  * @return
  * 1, If all additional locks can be initialized.
@@ -90,11 +93,6 @@ static int	pl_check_args(int ac, char **av)
  * 
  * @return
  * Return 0 if malloc failed. Else return 1.
-*/
-/**
- * @attention For rules->iteration, if it's 0, meaning the iteration mode
- *            is not enabled. If it's greater than 0, iteration mode is
- * 			  enabled, should check how many each philo has eaten.
 */
 static void	pl_setup_rules(int ac, char **av, t_rules *rules)
 {

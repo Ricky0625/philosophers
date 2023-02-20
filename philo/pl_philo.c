@@ -6,23 +6,11 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 14:23:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 15:34:09 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:06:47 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-// void	print_locks(t_philo *philo, int id)
-// {
-// 	printf("\n====== LOCKS%d ======\n", id);
-// 	printf("Declare lock: %p\n", &philo->rules->locks.declare_lock);
-// 	printf("Sim lock: %p\n", &philo->rules->locks.sim_state_lock);
-// 	printf("Death lock: %p\n", &philo->rules->locks.death_lock);
-// 	printf("Full lock: %p\n", &philo->rules->locks.full_lock);
-// 	printf("Meal lock: %p\n", &philo->meal_count_lock);
-// 	printf("Last lock: %p\n", &philo->last_ate_lock);
-// 	printf("====================\n\n");
-// }
 
 /**
  * @brief Initialize each philo and assign them their forks

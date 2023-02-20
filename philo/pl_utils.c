@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:38:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/19 13:36:28 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:07:42 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,6 @@ time_t	pl_get_time(void)
  * makes the timestamp of the program less accurate. Hence, to prevent this
  * situation, the idea is to let usleep to sleep a constant amount of time
  * and check if the program has slept for what's required.
-*/
-/**
- * TODO: Might have to lock "cur_time"
 */
 void	pl_usleep(time_t sec)
 {
