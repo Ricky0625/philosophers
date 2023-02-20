@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 15:33:56 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 17:17:56 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,10 @@ int	pl_full_tracker(t_philo *philo)
 	}
 	if (philo->rules->philo_full == philo->rules->philo_total)
 	{
-		philo->rules->sim_state = END;
 		pl_fork_action(philo, RETURN);
+		pthread_mutex_lock(&philo->rules->locks.sim_state_lock);
+		philo->rules->sim_state = END;
+		pthread_mutex_unlock(&philo->rules->locks.sim_state_lock);
 		pthread_mutex_unlock(&philo->rules->locks.full_lock);
 		return (1);
 	}
@@ -131,6 +133,7 @@ void	*pl_monitor(void *arg)
 			break ;
 		if (pl_check_dead(philo) == 1 || pl_full_tracker(philo) == 1)
 			break ;
+		usleep(philo->rules->time_to_die * 1000 / 2);
 	}
 	return (NULL);
 }
