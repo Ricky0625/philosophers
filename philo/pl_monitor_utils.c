@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 11:12:24 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/19 16:28:32 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 14:17:41 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ time_t	pl_get_last_ate(t_philo *philo)
 {
 	time_t	last_ate;
 
-	pthread_mutex_lock(&philo->rules->locks.last_ate_lock);
+	pthread_mutex_lock(&philo->last_ate_lock);
 	last_ate = philo->last_ate;
 	if (last_ate == 0)
 		last_ate = philo->rules->start_time;
-	pthread_mutex_unlock(&philo->rules->locks.last_ate_lock);
+	pthread_mutex_unlock(&philo->last_ate_lock);
 	return (last_ate);
 }
 
@@ -77,8 +77,8 @@ int	pl_get_meal_count(t_philo *philo)
 {
 	int	meal_count;
 
-	pthread_mutex_lock(&philo->rules->locks.meal_count_lock);
+	pthread_mutex_lock(&philo->meal_count_lock);
 	meal_count = philo->meal_count;
-	pthread_mutex_unlock(&philo->rules->locks.meal_count_lock);
+	pthread_mutex_unlock(&philo->meal_count_lock);
 	return (meal_count);
 }

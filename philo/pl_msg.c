@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/19 15:41:13 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 15:33:41 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	pl_declare_state(t_philo *philo, t_state state)
 	pthread_mutex_lock(&philo->rules->locks.declare_lock);
 	curr_time = pl_get_time();
 	start_time = philo->rules->start_time;
-	// printf("%ld %d ", curr_time - start_time, philo->id + 1);
 	printf("%8ld %3d ", curr_time - start_time, philo->id + 1);
 	if (state == FORK)
 		printf(PUR"has taken a fork\n"DEF);
@@ -82,3 +81,5 @@ void	pl_declare_state(t_philo *philo, t_state state)
 		printf(RED"%s\n"DEF, "died");
 	pthread_mutex_unlock(&philo->rules->locks.declare_lock);
 }
+
+// printf("%ld %d ", curr_time - start_time, philo->id + 1);

@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:45:21 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/19 16:14:57 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 15:18:41 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
  * 1, If all additional locks can be initialized.
  * 0, If there's an error while creating a mutex.
 */
-int	pl_lock_setup(t_locks *locks, t_lock_type type)
+int	pl_lock_setup(t_locks *locks, t_philo *philo, t_lock_type type)
 {
 	if (type != SHARED && type != PHILO)
 		return (0);
@@ -37,11 +37,15 @@ int	pl_lock_setup(t_locks *locks, t_lock_type type)
 			return (pl_show_error(CREATE_MUT_FAILED, -1));
 		if (pthread_mutex_init(&locks->sim_state_lock, NULL) != 0)
 			return (pl_show_error(CREATE_MUT_FAILED, -1));
+		if (pthread_mutex_init(&locks->death_lock, NULL) != 0)
+			return (pl_show_error(CREATE_MUT_FAILED, -1));
+		if (pthread_mutex_init(&locks->full_lock, NULL) != 0)
+			return (pl_show_error(CREATE_MUT_FAILED, -1));
 		return (1);
 	}
-	if (pthread_mutex_init(&locks->last_ate_lock, NULL) != 0)
+	if (pthread_mutex_init(&philo->last_ate_lock, NULL) != 0)
 		return (pl_show_error(CREATE_MUT_FAILED, -1));
-	if (pthread_mutex_init(&locks->meal_count_lock, NULL) != 0)
+	if (pthread_mutex_init(&philo->meal_count_lock, NULL) != 0)
 		return (pl_show_error(CREATE_MUT_FAILED, -1));
 	return (1);
 }
@@ -104,7 +108,7 @@ static void	pl_setup_rules(int ac, char **av, t_rules *rules)
 	else
 		rules->iteration = 0;
 	rules->philo_full = 0;
-	if (pl_lock_setup(&rules->locks, SHARED) == 0)
+	if (pl_lock_setup(&rules->locks, NULL, SHARED) == 0)
 		return ;
 }
 

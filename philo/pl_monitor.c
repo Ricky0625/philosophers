@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/19 16:57:08 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 15:33:56 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int	pl_full_tracker(t_philo *philo)
 
 	if (philo->rules->iteration == 0)
 		return (0);
+	pthread_mutex_lock(&philo->rules->locks.full_lock);
 	iteration = philo->rules->iteration;
 	if (pl_get_meal_count(philo) >= iteration && philo->full == NOTFULL)
 	{
@@ -51,8 +52,10 @@ int	pl_full_tracker(t_philo *philo)
 	{
 		philo->rules->sim_state = END;
 		pl_fork_action(philo, RETURN);
+		pthread_mutex_unlock(&philo->rules->locks.full_lock);
 		return (1);
 	}
+	pthread_mutex_unlock(&philo->rules->locks.full_lock);
 	return (0);
 }
 
@@ -78,15 +81,20 @@ int	pl_check_dead(t_philo *philo)
 	time_t	curr_time;
 	time_t	last_ate;
 
+	pthread_mutex_lock(&philo->rules->locks.death_lock);
 	last_ate = pl_get_last_ate(philo);
 	curr_time = pl_get_time();
 	if ((curr_time - last_ate) > philo->rules->time_to_die)
 	{
 		pl_declare_state(philo, DIED);
 		pl_fork_action(philo, RETURN);
+		pthread_mutex_lock(&philo->rules->locks.sim_state_lock);
 		philo->rules->sim_state = END;
+		pthread_mutex_unlock(&philo->rules->locks.sim_state_lock);
+		pthread_mutex_unlock(&philo->rules->locks.death_lock);
 		return (1);
 	}
+	pthread_mutex_unlock(&philo->rules->locks.death_lock);
 	return (0);
 }
 

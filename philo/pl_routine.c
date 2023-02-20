@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 16:26:09 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/19 16:53:32 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 14:21:49 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,13 @@ void	pl_fork_action(t_philo *philo, t_fork_action act)
 void	pl_eat(t_philo *philo)
 {
 	pl_fork_action(philo, TAKE);
-	pthread_mutex_lock(&philo->rules->locks.last_ate_lock);
+	pthread_mutex_lock(&philo->last_ate_lock);
 	philo->last_ate = pl_get_time();
-	pthread_mutex_unlock(&philo->rules->locks.last_ate_lock);
+	pthread_mutex_unlock(&philo->last_ate_lock);
 	pl_declare_state(philo, EAT);
-	pthread_mutex_lock(&philo->rules->locks.meal_count_lock);
+	pthread_mutex_lock(&philo->meal_count_lock);
 	philo->meal_count++;
-	pthread_mutex_unlock(&philo->rules->locks.meal_count_lock);
+	pthread_mutex_unlock(&philo->meal_count_lock);
 	pl_usleep(philo->rules->time_to_eat);
 	pl_fork_action(philo, RETURN);
 }
@@ -113,7 +113,10 @@ void	*pl_routine(void *arg)
 	while (1)
 	{
 		if (pl_get_sim_state(philo) == END)
+		{
+			pl_fork_action(philo, RETURN);
 			break ;
+		}
 		pl_eat(philo);
 		pl_sleep(philo);
 		pl_declare_state(philo, THINK);

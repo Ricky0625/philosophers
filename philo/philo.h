@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:15:04 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/19 16:55:55 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 15:32:49 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,19 +108,17 @@ typedef enum e_error
 /* ====== STRUCTS ====== */
 
 /**
- * @brief A struct that store all the additional mutexes
+ * @brief A struct that store all the additional mutexes (shared)
  * 
- * @param last_ate_lock		Philo's last ate mutex
- * @param meal_count_lock	Philo's meal count mutex
  * @param declare_lock		Philo's declare mutex
  * @param sim_state_lock	Philo's simulation state mutex
 */
 typedef struct s_locks
 {
-	pthread_mutex_t	last_ate_lock;
-	pthread_mutex_t	meal_count_lock;
 	pthread_mutex_t	declare_lock;
 	pthread_mutex_t	sim_state_lock;
+	pthread_mutex_t	death_lock;
+	pthread_mutex_t	full_lock;
 }		t_locks;
 
 /**
@@ -171,6 +169,8 @@ typedef struct s_philo
 	pthread_t		me;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	last_ate_lock;
+	pthread_mutex_t	meal_count_lock;
 	t_rules			*rules;
 }		t_philo;
 
@@ -197,7 +197,7 @@ int		pl_parse(int ac, char **av, t_rules *rules);
 
 // Philos
 void	pl_begin_simulation(t_rules *rules);
-int		pl_lock_setup(t_locks *locks, t_lock_type type);
+int		pl_lock_setup(t_locks *locks, t_philo *philo, t_lock_type type);
 
 // Philos action
 void	*pl_routine(void *arg);
