@@ -6,7 +6,7 @@
 #    By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/10 13:51:54 by wricky-t          #+#    #+#              #
-#    Updated: 2023/02/20 17:51:26 by wricky-t         ###   ########.fr        #
+#    Updated: 2023/02/20 18:22:38 by wricky-t         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -86,7 +86,7 @@ all: $(NAME)
 	@echo ""
 	@echo "$(WH)Welcome philosophers! How many will be dining today?"
 	@echo ""
-	@echo "       $(INSTR)$(DF)"
+	@echo "       	      $(INSTR)$(DF)"
 	@echo ""
 
 ifeq ($(DB), 1)
@@ -105,7 +105,7 @@ help:
 	@echo "  💀: Time to die          (in ms)"
 	@echo "  😋: Time to eat          (in ms)"
 	@echo "  😴: Time to sleep        (in ms)"
-	@echo "  🔢: Number of simulation $(YL)(OPTIONAL)"
+	@echo "  🔢: Number of simulation (> 0)     $(YL)[OPTIONAL]"
 	@echo ""
 	@echo "Note: Positive numeric argument only!"
 	@echo ""

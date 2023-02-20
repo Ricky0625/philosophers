@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:15:04 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 15:32:49 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:20:44 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ typedef enum e_lock_type
  * @param INVALID_ARGS_TOTAL	Invalid arguments count
  * @param NON_NUMERIC_ARGS		Consists of non numeric arguments
  * @param NEGATIVE_ARGS			Consists of non positive numeric arguments
+ * @param INVALID_OPTION		Optional option not more than 0
  * @param CREATE_THD_FAILED		Failed to create thread
  * @param CREATE_MUT_FAILED		Failed to create mutex
  * @param DESTROY_MUT_FAILED	Failed to destroy mutex
@@ -99,6 +100,7 @@ typedef enum e_error
 	INVALID_ARGS_TOTAL,
 	NON_NUMERIC_ARGS,
 	NEGATIVE_ARGS,
+	INVALID_OPTION,
 	CREATE_THD_FAILED,
 	CREATE_MUT_FAILED,
 	DESTROY_MUT_FAILED,

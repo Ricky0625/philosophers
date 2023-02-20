@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 18:10:01 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:19:52 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ int	pl_show_error(t_error error, int id)
 		printf("Found non numeric arguments!\n\n");
 	else if (error == NEGATIVE_ARGS)
 		printf("Found Negative numeric argument!\n\n");
+	else if (error == INVALID_OPTION)
+		printf("Optional argument should more than 0!\n\n");
 	else if (error == CREATE_THD_FAILED)
 		printf("Failed to create PHILO %d\n", id);
 	else if (error == CREATE_MUT_FAILED)

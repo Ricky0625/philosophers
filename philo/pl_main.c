@@ -6,16 +6,11 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:14:32 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 17:59:29 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:24:17 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-/**
- * TODO:
- * 1. Handle when option is 0.
-*/
 
 /**
  * @brief The main function
