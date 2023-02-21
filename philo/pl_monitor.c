@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 18:09:39 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/20 18:31:05 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,6 @@ int	pl_check_dead(t_philo *philo)
  * 
  * Same as philosophers' routine, when the simulation state is END, end the
  * routine.
- * 
- * TODO: Ask Joseph why usleep is necessary.
 */
 void	*pl_monitor(void *arg)
 {
