@@ -26,10 +26,12 @@ There are N philosphers sitting around a circular table eating spaghetti and dis
     - [`fork` (bonus)](#fork-bonus)
     - [`kill` (bonus)](#kill-bonus)
     - [`waitpid` (bonus)](#waitpid-bonus)
-    - [`sem_open` (bonus)](#sem_open-bonus)
-    - [`sem_close` (bonus)](#sem_close-bonus)
-    - [`sem_post` (bonus)](#sem_post-bonus)
-    - [`sem_unlink` (bonus)](#sem_unlink-bonus)
+    - [Semaphores](#semaphores)
+      - [`sem_open` (bonus)](#sem_open-bonus)
+      - [`sem_close` (bonus)](#sem_close-bonus)
+      - [`sem_post` (bonus)](#sem_post-bonus)
+      - [`sem_wait` (bonus)](#sem_wait-bonus)
+      - [`sem_unlink` (bonus)](#sem_unlink-bonus)
   - [Learning notes](#learning-notes)
     - [Short introduction to threads (pthreads)](#short-introduction-to-threads-pthreads)
     - [Difference between processes and threads](#difference-between-processes-and-threads)
@@ -291,17 +293,149 @@ If successful, the `pthread_mutex_unlock()` functions return zero. Otherwise, an
 
 ### `fork` (bonus)
 
+```c
+#include <unistd.h>
+
+pid_t   fork(void);
+```
+
+`fork` creates a new process by **duplicating** the calling process. The new process is referred to as the *child* process. The calling process is referred to as the *parent* process.
+
+The child process and the parent process run in **seperate memory spaces**. At the time of fork, both memory spaces have the same content. Memory writes, file mappings, and unmappings performed by one of the processes do not affect the other.
+
+On success, the PID of the child process is returned in the parent, and 0 is returned in the child. On failure, -1 is returned in the parent, no child process is created, and errno is set to indicate the error.
+
 ### `kill` (bonus)
+
+```c
+#include <signal.h>
+
+int kill(pid_t pid, int sig);
+```
+
+`kill` can be used to send any signal to any process group or process.
+
+If `pid` is positive, then signal `sig` is sent to the process with the ID specified by `pid`.
+
+If `pid` equals 0, then `sig` is sent to every process in the process group of the calling process.
+
+If `pid` equals -1, then `sig` is sent to every process for which the calling process has permission to send signals, except for process 1.
+
+If `sig` is 0, then no signal is sent.
+
+On success, 0 is returned. On error, -1 is returned, and errno is set to indicate the error.
 
 ### `waitpid` (bonus)
 
-### `sem_open` (bonus)
+```c
+#include <sys/wait.h>
 
-### `sem_close` (bonus)
+pid_t   waitpid(pid_t pid, int *status_ptr, int options);
+```
 
-### `sem_post` (bonus)
+Suspends the calling process until a child process ends or is stopped. More precisely, waitpid suspends the calling process until the system gets status information on the child. If the system already has status information on an appropriate child when waitpid is called, waitpid returns immediately. waitpid is also ended if the calling process receives a signal whose action is either to execute a signal handler or to end the process.
 
-### `sem_unlink` (bonus)
+`pid`: PID of child processes.
+
+`status_ptr`: Points to a location where waitpid can store a status value. This may also be `NULL`, in which case waitpid ignores the child return status.
+
+`options`: Specifies additional information for waitpid. Check more on [here](https://www.ibm.com/docs/en/zos/2.4.0?topic=functions-waitpid-wait-specific-child-process-end).
+
+### Semaphores
+
+Semaphore is an unsigned integer whose value is never allowed to fall below zero. Two operations can be performed on semaphores:
+
+1. Increment the semaphore value by one (`sem_post`)
+2. Decrement the semaphore value by one (`sem_wait`)
+
+If the value of a semaphore is currently zero, then a `sem_wait` operation will block until the value becomes greater than zero.
+
+Changes to the integer value are atomic, meaning that if one thread or process increments the integer and another wants to decrement the integer, those increment and decrement operations cannot interrupt each other.
+
+Why is semaphores useful? Sometimes they're used like mutex locks to protect some critical shared resources. Just because you can use a semaphore like a mutex lock doesn't mean that you should. There are some important differences so mutex locks have this notion of ownership. There's this idea that I hold the lock and whichever thread or process grabbed the lock, that thread of process is the one that needs to release the lock. So this notion is nowhere to be found with semaphores. Any thread or process can call `sem_wait` and also `sem_post` at any time under any circumstances. Hence, semaphores are more flexible than mutex.
+
+> Manual suggest that a named semaphore is identified by a name of the form `/somename`.
+
+Types of semaphore:
+
+   1. Binary semaphore
+   
+        The value of a binary semaphore can range only between `0` and `1`. On some systems, binary semaphores are known as mutex locks, as they are locks that provide mutual exclusion. The initial value of this type of semaphore will be `1`.
+
+   2. Counting semaphore
+
+        Its value can range over an unrestricted domain. It is used to control access to a resource that has multiple instances. This is used to control access to resources that has multiple instances.
+
+#### `sem_open` (bonus)
+
+`sem_open` initialize and open a named semaphore.
+
+```c
+#include <fcntl.h>      /* For O_* constants */
+#include <sys/stat.h>   /* For mode constants */
+#include <semaphore.h>
+
+sem_t   *sem_open(const char *name, int oflag);
+sem_t   *sem_open(const char *name, int oflag, mode_t mode , unsigned int value);
+```
+
+`sem_open` creates a new POSIX semaphore or opens an existing semaphore. The semaphore is identified by `name`.
+
+The `oflag` argument specifies flags that control the operation of the call. Definitions of the flags values can be obtained by including `<fcntl.h>`. If `O_CREAT` is specified in `oflag`, then the semaphore is create if it does not already exist. The owner of the semaphore is set to the effective user ID of the calling process. If both `O_CREAT` and `O_EXCL` are specified in `oflag`, then an error is returned if a semaphore with the give `name` already exists.
+
+If `O_CREAT` is specified in `oflag`, then two additional arguments must be supplied. The `mode` arguemt specifies the permissions to be placed on the new semaphore. Definitions for the permissions bits can be obtained by including `<sys/stat.h>`. Both **read and write** permission should be granted to each class or user that will access the semaphore. The `value` argument specifies the initial value for the new semaphore. If `O_CREAT` is specified, and a semphore with the given `name` already exists, then `mode` and `value` are ignored.
+
+On success, `sem_open` returns the address of the new semaphore; this address is used when calling other semaphore-related functions. On error, `sem_open` returns `SEM_FAILED`, with errno set to indicate the error.
+
+#### `sem_close` (bonus)
+
+```c
+#include <semaphore.h>
+
+int sem_close(sem_t *sem);
+```
+
+Closes the named semaphore referred to by `sem`, allowing any resources that the system has allocated to the calling process for this semaphore to be freed.
+
+On success, returns 0; on error, returns -1 with errno set to indicate the error.
+
+#### `sem_post` (bonus)
+
+```c
+#include <semaphore.h>
+
+int sem_post(sem_t *sem);
+```
+
+`sem_post` increments (unlocks) the semaphore pointed to by `sem`. If the semaphore's value consequently becomes greater than zero, then another process or thread blocked in a `sem_wait` call will be woken up and proceed to lock the semaphore.
+
+Returns 0 on success; on error, the value of the semaphore is left unchaged, -1 is returned, and errno is set to indicate the error.
+
+#### `sem_wait` (bonus)
+
+```c
+#include <semaphore.h>
+
+int sem_wait(sem_t *sem);
+```
+
+`sem_wait` decrements (locks) the semaphore pointed to be `sem`. If the semphore's value is greater than 0, then the decrement proceeds, and the function returns, immediately.
+
+If the semaphore currently has the value zero, then the call blocks wait until either it becomes possible to perform the decrement (the semaphore value rises above zero), or a signal handler interrupts the call.
+
+Returns 0 on success; on error, the value of the semaphore is left unchaged, -1 is returned, and errno is set to indicate the error.
+
+#### `sem_unlink` (bonus)
+
+```c
+#include <semaphore.h>
+
+int sem_unlink(const char *name);
+```
+
+`sem_unlink` removes the named semaphore referred to by `name`. The semaphore name is removed immediately. The semaphore is destroyed once all other processes that have the semaphore open close it.
+
+On success `sem_unlink` returns 0; on error, -1 is returned, with errno set to indicate the error.
 
 ## Learning notes
 
