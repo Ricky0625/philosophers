@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 18:31:05 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/22 11:07:50 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ int	pl_full_tracker(t_philo *philo)
 {
 	int	iteration;
 
-	if (philo->rules->iteration == 0)
+	iteration = philo->rules->iteration;
+	if (iteration == 0)
 		return (0);
 	pthread_mutex_lock(&philo->rules->locks.full_lock);
-	iteration = philo->rules->iteration;
 	if (pl_get_meal_count(philo) >= iteration && philo->full == NOTFULL)
 	{
 		philo->rules->philo_full++;

@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 14:23:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 18:06:47 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/21 17:21:05 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	pl_philo_init(t_simulation *sim, t_philo *philo, int id)
 	philo->id = id;
 	philo->meal_count = 0;
 	philo->full = NOTFULL;
-	philo->last_ate = 0;
+	philo->last_ate = pl_get_time();
 	philo->left_fork = &sim->forks[id];
 	philo->rules = sim->rules;
 	if (pl_lock_setup(NULL, philo, PHILO) == 0)

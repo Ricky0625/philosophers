@@ -6,7 +6,7 @@
 #    By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/10 13:51:54 by wricky-t          #+#    #+#              #
-#    Updated: 2023/02/20 18:22:38 by wricky-t         ###   ########.fr        #
+#    Updated: 2023/02/22 10:56:11 by wricky-t         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -137,7 +137,7 @@ norm: $(SRCS)
 	@$(NORM) $(SRCS) $(INCLUDES)
 
 val: all
-	@valgrind --leak-check=full --show-leak-kinds=definite,possible --log-file=leaks.txt ./philo 4 410 200 200
+	@valgrind --leak-check=full --show-leak-kinds=definite,possible --log-file=leaks.txt ./philo 4 310 200 200
 
 .PHONY:
 	clean fclean re
