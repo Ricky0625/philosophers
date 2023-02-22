@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:45:21 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/22 11:33:44 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/22 14:23:00 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ static int	pl_check_args(int ac, char **av)
 		arg = ft_atoi(av[i]);
 		if (arg < 0)
 			return (pl_show_error(NEGATIVE_ARGS, 0));
-		if (arg == 0 && i == ac - 1)
+		if (arg == 0 && i == 4)
 			return (pl_show_error(INVALID_OPTION, 0));
 	}
 	return (1);
