@@ -6,7 +6,7 @@
 #    By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/10 13:51:54 by wricky-t          #+#    #+#              #
-#    Updated: 2023/02/22 11:28:34 by wricky-t         ###   ########.fr        #
+#    Updated: 2023/02/22 12:12:37 by wricky-t         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,8 +21,8 @@ CC			:= gcc -g3
 CFLAGS		:= -Wall -Werror -Wextra -pthread
 
 ifeq ($(DB), 1)
-	# CFLAGS += -fsanitize=thread
-	CFLAGS += -fsanitize=address
+	CFLAGS += -fsanitize=thread
+	# CFLAGS += -fsanitize=address
 endif
 
 SRC_PATH	:= .
@@ -135,9 +135,6 @@ re: fclean all
 norm: $(SRCS)
 	@clear
 	@$(NORM) $(SRCS) $(INCLUDES)
-
-val: all
-	@valgrind --leak-check=full --show-leak-kinds=definite,possible --log-file=leaks.txt ./philo 4 310 200 200
 
 .PHONY:
 	clean fclean re

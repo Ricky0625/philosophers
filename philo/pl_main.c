@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:14:32 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/22 11:38:20 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/22 12:12:57 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,5 @@ int	main(int ac, char **av)
 	if (pl_parse(--ac, ++av, &rules) == 0)
 		return (EXIT_FAILURE);
 	pl_begin_simulation(&rules);
-	system("leaks -q philo");
 	return (EXIT_SUCCESS);
 }
