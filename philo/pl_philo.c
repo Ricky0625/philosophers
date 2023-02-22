@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 14:23:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/21 17:21:05 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/22 11:39:59 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,5 +149,7 @@ void	pl_begin_simulation(t_rules *rules)
 		if (pthread_join(sim->philos[i].me, NULL) != 0)
 			break ;
 	}
+	free(sim->forks);
+	free(sim->philos);
 	free(sim);
 }

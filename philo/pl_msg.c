@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/22 11:10:04 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/22 11:12:45 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	pl_declare_state(t_philo *philo, t_state state)
 	if (state == FORK)
 		printf(PUR"has taken a fork\n"DEF);
 	else if (state == EAT)
-		printf("is eating\n"DEF);
+		printf(GRN"is eating\n"DEF);
 	else if (state == SLEEP)
 		printf(CYN"is sleeping\n"DEF);
 	else if (state == THINK)

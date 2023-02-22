@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:45:21 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/20 18:19:09 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/22 11:33:44 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,6 @@ static int	pl_check_args(int ac, char **av)
  * @param ac Argument count (not including program name)
  * @param av Arguments (not including program name)
  * @param rules The rules struct
- * 
- * @return
- * Return 0 if malloc failed. Else return 1.
 */
 static void	pl_setup_rules(int ac, char **av, t_rules *rules)
 {
