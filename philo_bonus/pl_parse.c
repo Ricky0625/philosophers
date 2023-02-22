@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:45:21 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/22 12:25:39 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/22 14:26:09 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@
  * 1, If all additional locks can be initialized.
  * 0, If there's an error while creating a mutex.
  */
+/**
+ * TODO: Do I need this?
+*/
 int	pl_lock_setup(t_locks *locks, t_philo *philo, t_lock_type type)
 {
 	if (type != SHARED && type != PHILO)
@@ -81,7 +84,7 @@ static int	pl_check_args(int ac, char **av)
 		arg = ft_atoi(av[i]);
 		if (arg < 0)
 			return (pl_show_error(NEGATIVE_ARGS, 0));
-		if (arg == 0 && i == ac - 1)
+		if (arg == 0 && i == 4)
 			return (pl_show_error(INVALID_OPTION, 0));
 	}
 	return (1);
@@ -93,6 +96,9 @@ static int	pl_check_args(int ac, char **av)
  * @param av Arguments (not including program name)
  * @param rules The rules struct
  */
+/**
+ * TODO: Might need slight modification on this function
+*/
 static void	pl_setup_rules(int ac, char **av, t_rules *rules)
 {
 	rules->sim_state = RUN;
