@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/22 12:21:54 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/23 17:55:52 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,6 @@
  * @brief Show error message
  * @param error Error type
  * @param id The id of the philo
- * 
- * @details
- * 1. INVALID_ARGS_TOTAL - The number of args is nor 4 or 5.
- * 2. NON_NUMERIC_ARGS - Found non numeric arguments.
- * 3. NEGATIVE_ARGS - Found negative arguments.
- * 4. CREATE_THD_FAILED - Failed to create thread.
- * 5. CREATE_MUT_FAILED - Failed to create mutex.
  * 
  * @return
  * 1, if the error type is unknown
@@ -43,10 +36,10 @@ int	pl_show_error(t_error error, int id)
 		printf("Optional argument should more than 0!\n\n");
 	else if (error == CREATE_THD_FAILED)
 		printf("Failed to create PHILO %d\n", id);
-	else if (error == CREATE_MUT_FAILED)
-		printf("Failed to create MUTEX %d\n", id);
-	else if (error == DESTROY_MUT_FAILED)
-		printf("Failed to destroy MUTEX %d\n", id);
+	else if (error == OPEN_SEM_FAILED)
+		printf("Failed to open SEMAPHORE\n");
+	else if (error == FORK_FAILED)
+		printf("Failed to FORK child!\n");
 	if (!(error >= CREATE_THD_FAILED && error < ERROR_TOTAL))
 		printf(GRN"Run `make help` for help.\n"DEF);
 	return (0);
@@ -56,6 +49,12 @@ int	pl_show_error(t_error error, int id)
  * @brief Declare the state of a philo
  * @param philo The target philo
  * @param state The state of the philo
+ * 
+ * @details
+ * Process of declaring a philo's state is protected by a
+ * semaphore to prevent every philo to declare their state
+ * at the same time. This means there will only be only
+ * philo to declare state every single time.
 */
 void	pl_declare_state(t_philo *philo, t_state state)
 {
@@ -64,7 +63,7 @@ void	pl_declare_state(t_philo *philo, t_state state)
 
 	if (philo == NULL || pl_get_sim_state(philo) == END)
 		return ;
-	pthread_mutex_lock(&philo->rules->locks.declare_lock);
+	sem_wait(philo->rules->locks.declare_sem);
 	curr_time = pl_get_time();
 	start_time = philo->rules->start_time;
 	printf("%8ld %3d ", curr_time - start_time, philo->id + 1);
@@ -78,5 +77,5 @@ void	pl_declare_state(t_philo *philo, t_state state)
 		printf(YLW"is thinking\n"DEF);
 	else if (state == DIED)
 		printf(RED"%s\n"DEF, "died");
-	pthread_mutex_unlock(&philo->rules->locks.declare_lock);
+	sem_post(philo->rules->locks.declare_sem);
 }

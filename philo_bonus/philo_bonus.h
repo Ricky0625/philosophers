@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 10:42:30 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/22 12:21:23 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/23 17:08:09 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,15 @@
 # define CYN "\033[1;36m"
 # define WHT "\033[1;37m"
 # define DEF "\033[0m"
+
+/* ====== MACROS ====== */
+# define FORK_SEM "/fork_sem"
+# define DECLARE_SEM "/declare_sem"
+# define STATE_SEM "/state_sem"
+# define DEATH_SEM "/death_sem"
+# define FULL_SEM "/full_sem"
+# define LAST_ATE_SEM "/lastate_sem"
+# define MEAL_SEM "/meal_sem"
 
 /* ====== ENUMS ====== */
 
@@ -103,9 +112,9 @@ typedef enum e_error
 	NON_NUMERIC_ARGS,
 	NEGATIVE_ARGS,
 	INVALID_OPTION,
+	OPEN_SEM_FAILED,
+	FORK_FAILED,
 	CREATE_THD_FAILED,
-	CREATE_MUT_FAILED,
-	DESTROY_MUT_FAILED,
 	ERROR_TOTAL
 }		t_error;
 
@@ -119,10 +128,10 @@ typedef enum e_error
 */
 typedef struct s_locks
 {
-	pthread_mutex_t	declare_lock;
-	pthread_mutex_t	sim_state_lock;
-	pthread_mutex_t	death_lock;
-	pthread_mutex_t	full_lock;
+	sem_t	*declare_sem;
+	sem_t	*sim_state_sem;
+	sem_t	*death_sem;
+	sem_t	*full_sem;
 }		t_locks;
 
 /**
@@ -147,6 +156,7 @@ typedef struct s_rules
 	int		iteration;
 	int		philo_full;
 	t_locks	locks;
+	sem_t	*forks;
 }		t_rules;
 
 /**
@@ -170,11 +180,8 @@ typedef struct s_philo
 	int				meal_count;
 	int				full;
 	time_t			last_ate;
-	pthread_t		me;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	last_ate_lock;
-	pthread_mutex_t	meal_count_lock;
+	sem_t			*last_ate_sem;
+	sem_t			*meal_sem;
 	t_rules			*rules;
 }		t_philo;
 
@@ -189,9 +196,9 @@ typedef struct s_philo
 */
 typedef struct s_simulation
 {
-	pthread_mutex_t	*forks;
-	t_philo			*philos;
-	t_rules			*rules;
+	sem_t	*forks;
+	t_philo	*philos;
+	t_rules	*rules;
 }		t_simulation;
 
 /* ====== FUNCTION PROTOTYPES ====== */
@@ -204,11 +211,11 @@ void	pl_begin_simulation(t_rules *rules);
 int		pl_lock_setup(t_locks *locks, t_philo *philo, t_lock_type type);
 
 // Philos action
-void	*pl_routine(void *arg);
+void	pl_routine(t_philo *philo);
 void	pl_fork_action(t_philo *philo, t_fork_action act);
 
 // Monitor
-void	*pl_monitor(void *arg);
+void	*pl_monitor(void *philo);
 
 // Monitor utils
 time_t	pl_get_last_ate(t_philo *philo);
@@ -224,5 +231,8 @@ int		ft_atoi(const char *str);
 int		ft_isdigit_str(char *str);
 time_t	pl_get_time(void);
 void	pl_usleep(time_t sec);
+int		pl_sem_open(sem_t **sem, char *name, int value);
+char	*ft_itoa(int n);
+char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif

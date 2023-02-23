@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:34:46 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/22 12:21:54 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/23 17:53:35 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	pl_full_tracker(t_philo *philo)
 	iteration = philo->rules->iteration;
 	if (iteration == 0)
 		return (0);
-	pthread_mutex_lock(&philo->rules->locks.full_lock);
+	sem_wait(philo->rules->locks.full_sem);
 	if (pl_get_meal_count(philo) >= iteration && philo->full == NOTFULL)
 	{
 		philo->rules->philo_full++;
@@ -47,13 +47,13 @@ int	pl_full_tracker(t_philo *philo)
 	if (philo->rules->philo_full == philo->rules->philo_total)
 	{
 		pl_fork_action(philo, RETURN);
-		pthread_mutex_lock(&philo->rules->locks.sim_state_lock);
+		sem_wait(philo->rules->locks.sim_state_sem);
 		philo->rules->sim_state = END;
-		pthread_mutex_unlock(&philo->rules->locks.sim_state_lock);
-		pthread_mutex_unlock(&philo->rules->locks.full_lock);
+		sem_post(philo->rules->locks.sim_state_sem);
+		sem_post(philo->rules->locks.full_sem);
 		return (1);
 	}
-	pthread_mutex_unlock(&philo->rules->locks.full_lock);
+	sem_post(philo->rules->locks.full_sem);
 	return (0);
 }
 
@@ -62,7 +62,7 @@ int	pl_full_tracker(t_philo *philo)
  * @param philo The assigned philo
  * 
  * @details
- * This function checks if assigned philo will die of starvation or not.
+ * This function checks if assigned philo will die of hunger or not.
  * This is done by comparing the philo's last ate time and the time to die.
  * When the compared value is greater and equal than the time to die,
  * set the simulation state to "END". Declare the assign philo as dead.
@@ -76,20 +76,20 @@ int	pl_check_dead(t_philo *philo)
 	time_t	curr_time;
 	time_t	last_ate;
 
-	pthread_mutex_lock(&philo->rules->locks.death_lock);
+	sem_wait(philo->rules->locks.death_sem);
 	last_ate = pl_get_last_ate(philo);
 	curr_time = pl_get_time();
 	if ((curr_time - last_ate) > philo->rules->time_to_die)
 	{
 		pl_declare_state(philo, DIED);
 		pl_fork_action(philo, RETURN);
-		pthread_mutex_lock(&philo->rules->locks.sim_state_lock);
+		sem_wait(philo->rules->locks.sim_state_sem);
 		philo->rules->sim_state = END;
-		pthread_mutex_unlock(&philo->rules->locks.sim_state_lock);
-		pthread_mutex_unlock(&philo->rules->locks.death_lock);
+		sem_post(philo->rules->locks.sim_state_sem);
+		sem_post(philo->rules->locks.death_sem);
 		return (1);
 	}
-	pthread_mutex_unlock(&philo->rules->locks.death_lock);
+	sem_post(philo->rules->locks.death_sem);
 	return (0);
 }
 
@@ -103,6 +103,10 @@ int	pl_check_dead(t_philo *philo)
  * 
  * Same as philosophers' routine, when the simulation state is END, end the
  * routine.
+ * 
+ * Idea of placing on usleep here is to avoid the monitor thread to check
+ * on the philosopher every microseconds. So, sleep for time_to_die / 2,
+ * then check again.
 */
 void	*pl_monitor(void *arg)
 {
@@ -112,9 +116,9 @@ void	*pl_monitor(void *arg)
 	while (1)
 	{
 		if (pl_get_sim_state(philo) == END)
-			break ;
+			exit(EXIT_SUCCESS);
 		if (pl_check_dead(philo) == 1 || pl_full_tracker(philo) == 1)
-			break ;
+			exit(EXIT_SUCCESS);
 		usleep(philo->rules->time_to_die * 1000 / 2);
 	}
 	return (NULL);

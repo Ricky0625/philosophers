@@ -6,7 +6,7 @@
 #    By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/10 13:51:54 by wricky-t          #+#    #+#              #
-#    Updated: 2023/02/21 10:48:09 by wricky-t         ###   ########.fr        #
+#    Updated: 2023/02/23 16:52:23 by wricky-t         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ RM			:= rm -rf
 
 NORM		:= norminette
 
-INSTR		:= "./philo 👥 💀 😋 😴 [🔢]"
+INSTR		:= "./$(NAME) 👥 💀 😋 😴 [🔢]"
 
 #------------------------------------------------------------------------------#
 #   PROGRAM'S SCRS                                                             #
@@ -88,7 +88,7 @@ all: $(NAME)
 	@echo ""
 	@echo "                     $(GR)BONUS$(WH)"
 	@echo ""
-	@echo "       	     $(INSTR)$(DF)"
+	@echo "         $(INSTR)$(DF)"
 	@echo ""
 
 ifeq ($(DB), 1)
@@ -135,7 +135,7 @@ fclean: clean
 re: fclean all
 
 norm: $(SRCS)
-	@clear
+	@reset
 	@$(NORM) $(SRCS) $(INCLUDES)
 
 val: all
