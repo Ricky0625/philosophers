@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/21 10:42:30 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/23 17:08:09 by wricky-t         ###   ########.fr       */
+/*   Created: 2023/02/24 11:06:53 by wricky-t          #+#    #+#             */
+/*   Updated: 2023/02/24 11:07:20 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <sys/wait.h>
+# include <signal.h>
 # include <pthread.h>
 # include <semaphore.h>
 
@@ -157,6 +158,7 @@ typedef struct s_rules
 	int		philo_full;
 	t_locks	locks;
 	sem_t	*forks;
+	pid_t	*pids;
 }		t_rules;
 
 /**
@@ -176,13 +178,14 @@ typedef struct s_rules
 */
 typedef struct s_philo
 {
-	int				id;
-	int				meal_count;
-	int				full;
-	time_t			last_ate;
-	sem_t			*last_ate_sem;
-	sem_t			*meal_sem;
-	t_rules			*rules;
+	pid_t	me;
+	int		id;
+	int		meal_count;
+	int		full;
+	time_t	last_ate;
+	sem_t	*last_ate_sem;
+	sem_t	*meal_sem;
+	t_rules	*rules;
 }		t_philo;
 
 /**

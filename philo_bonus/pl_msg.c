@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/13 10:13:17 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/23 17:55:52 by wricky-t         ###   ########.fr       */
+/*   Created: 2023/02/24 11:12:39 by wricky-t          #+#    #+#             */
+/*   Updated: 2023/02/24 11:12:56 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,39 +43,4 @@ int	pl_show_error(t_error error, int id)
 	if (!(error >= CREATE_THD_FAILED && error < ERROR_TOTAL))
 		printf(GRN"Run `make help` for help.\n"DEF);
 	return (0);
-}
-
-/**
- * @brief Declare the state of a philo
- * @param philo The target philo
- * @param state The state of the philo
- * 
- * @details
- * Process of declaring a philo's state is protected by a
- * semaphore to prevent every philo to declare their state
- * at the same time. This means there will only be only
- * philo to declare state every single time.
-*/
-void	pl_declare_state(t_philo *philo, t_state state)
-{
-	time_t	curr_time;
-	time_t	start_time;
-
-	if (philo == NULL || pl_get_sim_state(philo) == END)
-		return ;
-	sem_wait(philo->rules->locks.declare_sem);
-	curr_time = pl_get_time();
-	start_time = philo->rules->start_time;
-	printf("%8ld %3d ", curr_time - start_time, philo->id + 1);
-	if (state == FORK)
-		printf(PUR"has taken a fork\n"DEF);
-	else if (state == EAT)
-		printf(GRN"is eating\n"DEF);
-	else if (state == SLEEP)
-		printf(CYN"is sleeping\n"DEF);
-	else if (state == THINK)
-		printf(YLW"is thinking\n"DEF);
-	else if (state == DIED)
-		printf(RED"%s\n"DEF, "died");
-	sem_post(philo->rules->locks.declare_sem);
 }
