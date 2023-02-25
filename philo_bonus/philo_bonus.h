@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:06:53 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/24 11:07:20 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/25 16:35:25 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,9 @@
 /* ====== MACROS ====== */
 # define FORK_SEM "/fork_sem"
 # define DECLARE_SEM "/declare_sem"
-# define STATE_SEM "/state_sem"
-# define DEATH_SEM "/death_sem"
+# define SIM_SEM "/sim_sem"
 # define FULL_SEM "/full_sem"
 # define LAST_ATE_SEM "/lastate_sem"
-# define MEAL_SEM "/meal_sem"
 
 /* ====== ENUMS ====== */
 
@@ -87,13 +85,13 @@ typedef enum e_fork_action
 /**
  * @brief Enum for lock type
  * 
- * @param SHARED 	The mutex is shared among all philo
- * @param PHILO		The mutex is only for the assigned philo
+ * @param LAST_ATE To setup semaphore for last_ate
+ * @param MEAL     To setup semaphore for meal_count
 */
 typedef enum e_lock_type
 {
-	SHARED,
-	PHILO
+	LAST_ATE,
+	MEAL
 }		t_lock_type;
 
 /**
@@ -130,15 +128,13 @@ typedef enum e_error
 typedef struct s_locks
 {
 	sem_t	*declare_sem;
-	sem_t	*sim_state_sem;
-	sem_t	*death_sem;
+	sem_t	*sim_sem;
 	sem_t	*full_sem;
 }		t_locks;
 
 /**
  * @brief Struct for the simulation rules
  * 
- * @param sim_state 	The state of the simulation
  * @param start_time	The start time of the simulation
  * @param philo_total 	Number of philos
  * @param time_to_die 	Time to die in ms
@@ -148,14 +144,12 @@ typedef struct s_locks
 */
 typedef struct s_rules
 {
-	t_state	sim_state;
 	time_t	start_time;
 	int		philo_total;
 	int		time_to_die;
 	int		time_to_eat;
 	int		time_to_sleep;
 	int		iteration;
-	int		philo_full;
 	t_locks	locks;
 	sem_t	*forks;
 	pid_t	*pids;
@@ -184,7 +178,6 @@ typedef struct s_philo
 	int		full;
 	time_t	last_ate;
 	sem_t	*last_ate_sem;
-	sem_t	*meal_sem;
 	t_rules	*rules;
 }		t_philo;
 
@@ -199,7 +192,6 @@ typedef struct s_philo
 */
 typedef struct s_simulation
 {
-	sem_t	*forks;
 	t_philo	*philos;
 	t_rules	*rules;
 }		t_simulation;
@@ -211,27 +203,24 @@ int		pl_parse(int ac, char **av, t_rules *rules);
 
 // Philos
 void	pl_begin_simulation(t_rules *rules);
-int		pl_lock_setup(t_locks *locks, t_philo *philo, t_lock_type type);
 
 // Philos action
 void	pl_routine(t_philo *philo);
-void	pl_fork_action(t_philo *philo, t_fork_action act);
 
 // Monitor
 void	*pl_monitor(void *philo);
+void	pl_check_full(t_rules *rules);
+int		pl_monitor_sim(t_rules *rules);
 
-// Monitor utils
-time_t	pl_get_last_ate(t_philo *philo);
-t_state	pl_get_sim_state(t_philo *philo);
-int		pl_get_meal_count(t_philo *philo);
+// Semaphore
+int		pl_setup_shared_sem(t_locks *locks);
+int		pl_setup_philo_sem(t_philo *philo);
 
 // Message
 int		pl_show_error(t_error error, int id);
 void	pl_declare_state(t_philo *philo, t_state state);
 
 // Utils
-int		ft_atoi(const char *str);
-int		ft_isdigit_str(char *str);
 time_t	pl_get_time(void);
 void	pl_usleep(time_t sec);
 int		pl_sem_open(sem_t **sem, char *name, int value);
