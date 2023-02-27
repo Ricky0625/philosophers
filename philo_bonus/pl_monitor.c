@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:39:39 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/27 16:07:01 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:47:00 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ void	*pl_monitor(void *arg)
 	philo = arg;
 	while (1)
 	{
+		sem_wait(philo->rules->locks.death_sem);
 		sem_wait(philo->last_ate_sem);
 		last_ate = philo->last_ate;
 		sem_post(philo->last_ate_sem);
@@ -92,6 +93,7 @@ void	*pl_monitor(void *arg)
 			exit(0);
 		}
 		usleep(philo->rules->time_to_die / 2);
+		sem_post(philo->rules->locks.death_sem);
 	}
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:06:53 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/27 15:53:03 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:46:15 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@
 # define SIM_SEM "/sim_sem"
 # define FULL_SEM "/full_sem"
 # define LAST_ATE_SEM "/lastate_sem"
+# define DEATH_SEM "/death_sem"
 
 /* ====== ENUMS ====== */
 
@@ -130,6 +131,7 @@ typedef struct s_locks
 	sem_t	*declare_sem;
 	sem_t	*sim_sem;
 	sem_t	*full_sem;
+	sem_t	*death_sem;
 }		t_locks;
 
 /**

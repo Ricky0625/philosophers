@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:17:36 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/27 16:10:22 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:46:29 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,11 @@ void	pl_end_simulation(t_rules *rules)
 		kill(check_full, SIGTERM);
 		pl_kill_philos(rules, exited);
 	}
+	sem_close(rules->locks.declare_sem);
+	sem_close(rules->locks.full_sem);
+	sem_close(rules->locks.sim_sem);
+	sem_close(rules->locks.death_sem);
+	free(rules->pids);
 }
 
 /**
@@ -161,4 +166,6 @@ void	pl_begin_simulation(t_rules *rules)
 	if (pl_simulation_init(sim, rules) == 0)
 		return ;
 	pl_end_simulation(rules);
+	free(sim->philos);
+	free(sim);
 }

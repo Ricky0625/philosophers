@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:29:12 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/25 14:26:00 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:45:41 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ int	pl_sem_open(sem_t **sem, char *name, int value)
 int	pl_setup_shared_sem(t_locks *locks)
 {
 	if (pl_sem_open(&locks->declare_sem, DECLARE_SEM, 1) == 0)
+		return (0);
+	if (pl_sem_open(&locks->death_sem, DEATH_SEM, 1) == 0)
 		return (0);
 	if (pl_sem_open(&locks->sim_sem, SIM_SEM, 0) == 0)
 		return (0);
