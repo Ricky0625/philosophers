@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:17:36 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/25 16:43:08 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:10:22 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,13 +93,53 @@ int	pl_simulation_init(t_simulation *sim, t_rules *rules)
 	rules->pids = malloc(sizeof(pid_t) * rules->philo_total);
 	if (rules->pids == NULL)
 		return (0);
-	rules->start_time = pl_get_time();
 	if (pl_setup_shared_sem(&rules->locks) == 0)
 		return (0);
+	rules->start_time = pl_get_time();
 	if (pl_spawn_philo(sim) == 0)
 		return (0);
-	pl_check_full(rules);
 	return (1);
+}
+
+/**
+ * @brief Function to end the simulation when someone is dead or
+ *        everyone is full.
+ * 
+ * @attention
+ * waitpid returns the process ID of the child whose state has
+ * changed.
+ * 
+ * @details
+ * The idea here is to use the return value of waitpid to know
+ * the reason why the simulation end. If the "exited" value is
+ * the same as "check_full", meaning all philo are full. If the
+ * "exited" value is not the same as "check_full", meaning someone
+ * died.
+ * 
+ * If the reason is because all philo are full, kill all the philos.
+ * If the reason is because someone died, kill all the philos but
+ * excluding that one that has already exited.
+ * 
+ * @credit to MTLKS for such an elegant way to check if any philo exits :D
+*/
+void	pl_end_simulation(t_rules *rules)
+{
+	pid_t	check_full;
+	pid_t	exited;
+
+	exited = -1;
+	check_full = fork();
+	if (check_full == 0)
+		pl_check_full(rules);
+	while (exited == -1)
+		exited = waitpid(-1, NULL, 0);
+	if (exited == check_full)
+		pl_kill_philos(rules, -1);
+	else if (exited > 0)
+	{
+		kill(check_full, SIGTERM);
+		pl_kill_philos(rules, exited);
+	}
 }
 
 /**
@@ -120,6 +160,5 @@ void	pl_begin_simulation(t_rules *rules)
 		return ;
 	if (pl_simulation_init(sim, rules) == 0)
 		return ;
-	while (waitpid(-1, NULL, 0) != -1)
-		;
+	pl_end_simulation(rules);
 }

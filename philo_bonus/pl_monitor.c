@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:39:39 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/25 16:40:30 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/27 16:07:01 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,18 @@
  * @brief Kill all the philos at once
  * @param rules The rule struct
 */
-void	pl_kill_philos(t_rules *rules)
+void	pl_kill_philos(t_rules *rules, pid_t exclude)
 {
 	int	i;
 
 	i = -1;
 	while (++i < rules->philo_total)
-		kill(rules->pids[i], SIGINT);
+	{
+		if (exclude != -1 && rules->pids[i] == exclude)
+			continue ;
+		if (waitpid(rules->pids[i], NULL, WNOHANG) == 0)
+			kill(rules->pids[i], SIGTERM);
+	}
 }
 
 /**
@@ -52,7 +57,7 @@ void	pl_check_full(t_rules *rules)
 	while (++i < rules->philo_total)
 		sem_wait(rules->locks.full_sem);
 	sem_wait(rules->locks.declare_sem);
-	pl_kill_philos(rules);
+	exit(0);
 }
 
 /**
@@ -62,7 +67,12 @@ void	pl_check_full(t_rules *rules)
  * @details
  * Check if the philo to starve to death. When that happens, declare
  * that the assigned philo is dead and sem_wait declare_sem to
- * prevent other philo to declare their state. Kill all philos afterward.
+ * prevent other philo to declare their state.
+ * 
+ * @attention
+ * Since this function will be executed by thread in the child process,
+ * meaning if we call exit in thread, it will exit the child process
+ * as well.
 */
 void	*pl_monitor(void *arg)
 {
@@ -79,9 +89,9 @@ void	*pl_monitor(void *arg)
 		{
 			pl_declare_state(philo, DIED);
 			sem_wait(philo->rules->locks.declare_sem);
-			break ;
+			exit(0);
 		}
+		usleep(philo->rules->time_to_die / 2);
 	}
-	pl_kill_philos(philo->rules);
 	return (NULL);
 }

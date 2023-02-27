@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:06:53 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/25 16:35:25 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/02/27 15:53:03 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,6 +211,7 @@ void	pl_routine(t_philo *philo);
 void	*pl_monitor(void *philo);
 void	pl_check_full(t_rules *rules);
 int		pl_monitor_sim(t_rules *rules);
+void	pl_kill_philos(t_rules *rules, pid_t exclude);
 
 // Semaphore
 int		pl_setup_shared_sem(t_locks *locks);
