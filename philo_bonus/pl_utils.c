@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:10:28 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/03/01 14:25:50 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/01 15:32:11 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 */
 int		pl_get_timestamp(struct timeval before)
 {
-	static struct timeval	now;
+	struct timeval	now;
 
 	gettimeofday(&now, NULL);
 	return (((now.tv_sec - before.tv_sec) * 1000)
