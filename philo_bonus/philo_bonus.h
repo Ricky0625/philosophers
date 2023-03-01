@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:06:53 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/27 16:46:15 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:25:56 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,15 +146,16 @@ typedef struct s_locks
 */
 typedef struct s_rules
 {
-	time_t	start_time;
-	int		philo_total;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		iteration;
-	t_locks	locks;
-	sem_t	*forks;
-	pid_t	*pids;
+	// time_t			start_time;
+	struct timeval	start_time;
+	int				philo_total;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				iteration;
+	t_locks			locks;
+	sem_t			*forks;
+	pid_t			*pids;
 }		t_rules;
 
 /**
@@ -174,13 +175,13 @@ typedef struct s_rules
 */
 typedef struct s_philo
 {
-	pid_t	me;
-	int		id;
-	int		meal_count;
-	int		full;
-	time_t	last_ate;
-	sem_t	*last_ate_sem;
-	t_rules	*rules;
+	pid_t			me;
+	int				id;
+	int				meal_count;
+	int				full;
+	struct timeval	last_ate;
+	sem_t			*last_ate_sem;
+	t_rules			*rules;
 }		t_philo;
 
 /**
@@ -224,8 +225,8 @@ int		pl_show_error(t_error error, int id);
 void	pl_declare_state(t_philo *philo, t_state state);
 
 // Utils
-time_t	pl_get_time(void);
-void	pl_usleep(time_t sec);
+int		pl_get_timestamp(struct timeval before);
+void	pl_usleep(int sec);
 int		pl_sem_open(sem_t **sem, char *name, int value);
 char	*ft_itoa(int n);
 char	*ft_strjoin(char const *s1, char const *s2);

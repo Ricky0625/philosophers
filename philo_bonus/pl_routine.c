@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 14:59:58 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/25 16:44:12 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:32:12 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	pl_eat(t_philo *philo)
 {
 	pl_fork_action(philo, TAKE);
 	sem_wait(philo->last_ate_sem);
-	philo->last_ate = pl_get_time();
+	gettimeofday(&philo->last_ate, NULL);
 	sem_post(philo->last_ate_sem);
 	pl_declare_state(philo, EAT);
 	philo->meal_count++;
@@ -102,8 +102,6 @@ void	pl_routine(t_philo *philo)
 {
 	pthread_t	monitor;
 
-	if (philo->id % 2 != 0)
-		pl_usleep(philo->rules->time_to_eat / 2);
 	if (pthread_create(&monitor, NULL, &pl_monitor, (void *)philo) != 0)
 	{
 		pl_show_error(CREATE_THD_FAILED, philo->id);

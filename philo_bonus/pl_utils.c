@@ -6,23 +6,34 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:10:28 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/25 16:34:55 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:25:50 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
 /**
- * @brief Get current time in seconds
- *
- * @return Time in time_t format
- */
-time_t	pl_get_time(void)
+ * @brief Get timestamp
+ * 
+ * @details
+ * Get the current time and minus the target time. Return
+ * the value difference.
+ * 
+ * @attention
+ * In my mandatory, I didn't use the struct timeval directly. I convert
+ * the time format into time_t because I think that's easier to read.
+ * However, this method will cause data race in my bonus part even though
+ * I protected all the critical part. I don't understand why and how.
+ * Thankfully, Sean the KHONVOUM, went through my code and found this
+ * issue. The reason behind this is unknown. It's so bizzare.
+*/
+int		pl_get_timestamp(struct timeval before)
 {
-	struct timeval	time;
+	static struct timeval	now;
 
-	gettimeofday(&time, NULL);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	gettimeofday(&now, NULL);
+	return (((now.tv_sec - before.tv_sec) * 1000)
+		+ ((now.tv_usec - before.tv_usec) / 1000));
 }
 
 /**
@@ -35,15 +46,15 @@ time_t	pl_get_time(void)
  * situation, the idea is to let usleep to sleep a constant amount of time
  * and check if the program has slept for what's required.
  */
-void	pl_usleep(time_t sec)
+void	pl_usleep(int sec)
 {
-	time_t	cur_time;
+	struct timeval	start;
 
-	cur_time = pl_get_time();
+	gettimeofday(&start, NULL);
 	while (1)
 	{
 		usleep(500);
-		if ((pl_get_time() - cur_time) >= sec)
+		if (pl_get_timestamp(start) >= sec)
 			break ;
 	}
 }

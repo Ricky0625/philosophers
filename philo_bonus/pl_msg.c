@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:12:39 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/25 15:23:45 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:08:08 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,13 @@ int	pl_show_error(t_error error, int id)
 */
 void	pl_declare_state(t_philo *philo, t_state state)
 {
-	time_t	curr_time;
-	time_t	start_time;
+	struct timeval	start_time;
 
 	if (philo == NULL)
 		return ;
 	sem_wait(philo->rules->locks.declare_sem);
-	curr_time = pl_get_time();
 	start_time = philo->rules->start_time;
-	printf(WHT"%8ld %3d ", curr_time - start_time, philo->id + 1);
+	printf(WHT"%8d %3d ", pl_get_timestamp(start_time), philo->id + 1);
 	if (state == FORK)
 		printf(PUR"has taken a fork\n"DEF);
 	else if (state == EAT)

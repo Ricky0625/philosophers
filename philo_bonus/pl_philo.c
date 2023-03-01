@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:17:36 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/27 16:46:29 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:09:05 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	pl_philo_init(t_simulation *sim, t_philo *philo, int id)
 	philo->id = id;
 	philo->meal_count = 0;
 	philo->full = NOTFULL;
-	philo->last_ate = pl_get_time();
+	gettimeofday(&philo->last_ate, NULL);
 	philo->rules = sim->rules;
 	if (pl_setup_philo_sem(philo) == 0)
 		return (0);
@@ -95,7 +95,7 @@ int	pl_simulation_init(t_simulation *sim, t_rules *rules)
 		return (0);
 	if (pl_setup_shared_sem(&rules->locks) == 0)
 		return (0);
-	rules->start_time = pl_get_time();
+	gettimeofday(&rules->start_time, NULL);
 	if (pl_spawn_philo(sim) == 0)
 		return (0);
 	return (1);

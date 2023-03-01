@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 16:39:39 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/02/27 16:47:00 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/01 14:25:02 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,17 @@ void	pl_check_full(t_rules *rules)
 */
 void	*pl_monitor(void *arg)
 {
-	t_philo	*philo;
-	time_t	last_ate;
+	t_philo			*philo;
+	int				timestamp;
 
 	philo = arg;
 	while (1)
 	{
 		sem_wait(philo->rules->locks.death_sem);
 		sem_wait(philo->last_ate_sem);
-		last_ate = philo->last_ate;
+		timestamp = pl_get_timestamp(philo->last_ate);
 		sem_post(philo->last_ate_sem);
-		if ((pl_get_time() - last_ate) > philo->rules->time_to_die)
+		if (timestamp > philo->rules->time_to_die)
 		{
 			pl_declare_state(philo, DIED);
 			sem_wait(philo->rules->locks.declare_sem);
