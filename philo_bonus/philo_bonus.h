@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:06:53 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/03/01 14:25:56 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/03 18:21:53 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,6 @@ typedef struct s_locks
 */
 typedef struct s_rules
 {
-	// time_t			start_time;
 	struct timeval	start_time;
 	int				philo_total;
 	int				time_to_die;

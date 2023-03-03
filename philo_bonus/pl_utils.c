@@ -6,7 +6,7 @@
 /*   By: wricky-t <wricky-t@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:10:28 by wricky-t          #+#    #+#             */
-/*   Updated: 2023/03/01 15:32:11 by wricky-t         ###   ########.fr       */
+/*   Updated: 2023/03/03 18:21:38 by wricky-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
  * Thankfully, Sean the KHONVOUM, went through my code and found this
  * issue. The reason behind this is unknown. It's so bizzare.
 */
-int		pl_get_timestamp(struct timeval before)
+int	pl_get_timestamp(struct timeval before)
 {
 	struct timeval	now;
 
